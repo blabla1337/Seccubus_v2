@@ -1,1 +1,1 @@
-testssl.sh is a checks TLS/SSL ciphers, protocols as well as cryptographic flaws and more.
+testssl.sh is a free command line tool which checks a server's service on any port for the support of TLS/SSL ciphers, protocols as well as recent cryptographic flaws and more. 

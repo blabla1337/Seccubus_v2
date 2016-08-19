@@ -82,45 +82,40 @@ if ( ! $testssl_path && -e $testssl_path ) {
 
 my $tempfile = "/tmp/seccubus.$$";
 
-my $testssl_options = "--file $hosts_file --jsonfile $tempfile.csv $testssl_options";
+my $options = " --color 0 $testssl_options --jsonfile=$tempfile.json --file $hosts_file";
 print "testssl options: $testssl_options\n" if $verbose;
 
 my $timestamp = make_timestamp();
 print "Timestamp = $timestamp\n" if $verbose;
 
 print "Execuing $testssl_path $testssl_options\n" unless $quiet;
-run_cmd("$testssl_path $testssl_options",$verbose,$remote,[ $tempfile,"$tempfile.*" ], [ $hosts_file ]);
+run_cmd("$testssl_path $options",$verbose,$remote,[ $tempfile,"$tempfile.*" ], [ $hosts_file ]);
 
-print "Scanning done, converting .nbe to ivil\n" unless $quiet;
-my $cmd = "perl -I$config->{paths}->{modules} $config->{paths}->{bindir}\/nbe2ivil --scanner=testssl --scannerversion=$testssl_version --workspace '$workspace' --scan '$scan' --timestamp=$timestamp --infile '$tempfile.nbe' ";
+print "Scanning done, converting .json to ivil\n" unless $quiet;
+my $cmd = "perl -I$config->{paths}->{modules} $config->{paths}->{bindir}\/testssl2ivil --scanner=testssl --workspace '$workspace' --scan '$scan' --timestamp=$timestamp --infile '$tempfile.json' ";
 $cmd .= "-v" if $verbose > 1;
 run_cmd($cmd,$verbose);
 
 print "Importing ivil\n" unless $quiet;
 $cmd = "$load_ivil --workspace '$workspace' --scan '$scan' --scanner testssl --timestamp $timestamp";
 $cmd .= " -v" if $verbose > 1;
-$cmd .= " '$tempfile.ivil.xml'";
+$cmd .= " '$tempfile.json.ivil.xml'";
 run_cmd($cmd,$verbose);
 
 print "Scan imported, adding files to scan $scan in workspace $workspace\n" unless $quiet;
 
-$cmd = "$attach_file --workspace '$workspace' --scan '$scan' --timestamp $timestamp --file '$tempfile' --description 'Command line output'";
+$cmd = "$attach_file --workspace '$workspace' --scan '$scan' --timestamp $timestamp --file '$tempfile.json' --description 'JSON output'";
 $cmd .= " -v" if $verbose > 1;
 run_cmd($cmd,$verbose);
 
-$cmd = "$attach_file --workspace '$workspace' --scan '$scan' --timestamp $timestamp --file '$tempfile.csv' --description 'CSV output'";
-$cmd .= " -v" if $verbose > 1;
-run_cmd($cmd,$verbose);
-
-$cmd = "$attach_file --workspace '$workspace' --scan '$scan' --timestamp $timestamp --file '$tempfile.ivil.xml' --description 'IVIL output'";
+$cmd = "$attach_file --workspace '$workspace' --scan '$scan' --timestamp $timestamp --file '$tempfile.json.ivil.xml' --description 'IVIL output'";
 $cmd .= " -v" if $verbose > 1;
 run_cmd($cmd,$verbose);
 
 # Cleanup
 unless ( $nodelete ) {
-	unlink "$tempfile" if -e "$tempfile";
-	unlink "$tempfile.csv" if -e "$tempfile.csv";
-	unlink "$tempfile.ivil.xml" if -e "$tempfile.ivil.xml";
+#	unlink "$tempfile.json" if -e "$tempfile.json";
+#	unlink "$tempfile.ivil.xml" if -e "$tempfile.ivil.xml";
 }
 if ( $remote ) {
 	run_cmd("rm -f $tempfile $tempfile.*",$verbose,$remote);
@@ -157,13 +152,25 @@ Arguments:
 	exit(1);
 }
 
+
 sub get_testssl_path() {
-	$path = run_cmd("ls /opt/testssl.sh/testssl.sh",0,$remote);
+	my $path = run_cmd("ls /opt/testssl.sh/testssl.sh",0,$remote);
 	if ( $path == '/opt/testssl.sh/testssl.sh' ) {
 		return '/opt/testssl.sh/testssl.sh';
 	}
+        open my $fh, '<', $path or die "Could not open '$path' $!\n";
+        while (my $line = <$fh>) {
+                chomp $line;
+                my @strings = $line =~ /(^VERSION=)/g;
+                foreach my $s (@strings) {
+                print  "'$s'";
+
+        }
+}
+
 	return undef;
 }
+
 
 sub make_timestamp() {
 	my ($second, $minute, $hour, $day, $month, $year) = localtime();
