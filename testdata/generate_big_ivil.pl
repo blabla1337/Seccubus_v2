@@ -15,25 +15,30 @@
 # ------------------------------------------------------------------------------
 # This little script checks all files te see if they are perl files and if so 
 # ------------------------------------------------------------------------------
-
 use strict;
-use Test::More;
-use Data::Dumper;
-#use SeccubusV2;
 
-my $tests = 0;
+use lib "SeccubusV2";
+use IVIL;
 
-my $pwd = `pwd`;
-chomp($pwd);
-if ( $pwd =~ /^\/home\/travis/ ) {
-	ok(1, `git fetch --unshallow`); $tests++;
-} else {
-	ok(1, "Not running on Travis right now"); $tests++;
+open(OUT, ">testdata/big.ivil.xml") or die "Unable to open output file testdata/big.ivil.xml";
+print OUT xml_header();
+print OUT ivil_open();
+print "Creating findings\n";
+print OUT "<findings>\n";
+
+my $finding = {};
+$finding->{ip} = "127.0.0.1";
+$finding->{id} = "big";
+$finding->{severity} = 0;
+foreach my $n (0..1000) {
+	$finding->{port} = $n;
+	$finding->{finding} = "Big finding #$n\n";
+	print OUT ivil_finding($finding);
 }
+print OUT "</findings>\n";
 
-#my $config = get_config();
-#is($config->{paths}->{bindir}, "", "Bindir"); $tests++;
+print OUT ivil_close();
 
-#ok(1, "No need to do anything special for Travis CI right now"); $tests++;
+close OUT;
 
-done_testing($tests);
+exit();
