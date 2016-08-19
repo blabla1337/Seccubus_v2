@@ -1,0 +1,25 @@
+<?xml version="1.0" standalone='yes'?>
+<IVIL version="0.2">
+	<addressee>
+		<program>Seccubus</program>
+		<programSpecificData>
+			<workspace>test</workspace>
+			<scan>test</scan>
+		</programSpecificData>
+	</addressee>
+	<sender>
+		<scanner_type>testssl</scanner_type>
+		<version>1.0</version>
+		<timestamp>200001010000</timestamp>
+	</sender>
+	<findings>
+		<finding>
+			<ip>127.0.0.1</ip>
+			<hostname>example.com</hostname>
+			<port>443</port>
+			<id>std_MEDIUM</id>
+			<severity>2</severity>
+			<finding_txt>Medium grade encryption   offered (NOT ok) - bad</finding_txt>
+		</finding>
+	</findings>
+</IVIL>
