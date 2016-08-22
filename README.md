@@ -21,6 +21,7 @@ Seccubus V2 works with the following scanners:
 * SSLyze
 * Medusa
 * Qualys SSL labs
+* testssl.sh
 
 For more information visit [www.seccubus.com]
 
@@ -34,19 +35,4 @@ xx-xx-2016 - 2.25 -
 
 Enhancements
 ------------
-* #319 - RPM now builds and installs under CentOs/RHEL 5 too
-* #320 - Nessus6 scanner now downloads PDF and HTML version of report too
-* #312 - SSLLabs and Nessus6 scanner no longer depend on perl-REST-Client
-* #322 - Removed old scanners: Nessus v5 and earlier, OpenVAS v5 and earlier
-* #128 - Limit the amount of findings that is returned from the back end
-* Improved exit codes for the onlyonxday.sh utility
-
-Bug Fixes
----------
-* #323 - Non-critical warnings in unit tests fixed
-* #305 - Finding change records are generated even if a finding did not actually change
-* #327 - OpenVAS target is always created with the default portlist
-* #328 - CopyRight year unit test appears to be broken on Travis
-* #333 - LWP::UserAgent is missing method delete on RH5 and RH6
-* #344 - Nessus6 scanner script using LWP::UserAgent is too brittle
-
+* #302 - Added the testssl.sh tool to Seccubus 
